@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProductCard2() {
     const courseDetails = {
         name: "Web Development Course",
-        amount: 1,
+        amount: 450,
         image: "https://www.elegantthemes.com/blog/wp-content/uploads/2018/12/top11.png"
     };
 

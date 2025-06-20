@@ -9,7 +9,7 @@ export default function ProductCard() {
     // Define course details inside component
     const courseDetails = {
         name: "Python Course",
-        amount: 1,
+        amount: 350,
         image: "https://www.emexotechnologies.com/wp-content/uploads/2021/01/python-training-emexo.png"
     };
 

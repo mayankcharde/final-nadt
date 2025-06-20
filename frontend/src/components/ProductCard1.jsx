@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProductCard1() {
     const courseDetails = {
         name: "Java Course",
-        amount: 1,
+        amount: 400,
         image: "https://www.apponix.com/front/images/app-java.jpeg"
     };
 
