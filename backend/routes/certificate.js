@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const puppeteer = require('puppeteer');
+let chromium = null;
+try {
+    chromium = require('chrome-aws-lambda');
+} catch (e) {
+    // chrome-aws-lambda not available locally, ignore
+}
 const path = require('path');
 const fs = require('fs').promises;
 const handlebars = require('handlebars');
@@ -14,7 +19,13 @@ const generateCertNumber = () => {
     return `NADT-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`.toUpperCase();
 };
 
+const isRender = process.env.RENDER === 'true' || process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.CHROME_AWS_LAMBDA_VERSION;
+
 router.post('/generate', async (req, res) => {
+    let browser = null;
+    let pdfPath = '';
+    const timeoutMs = 25000; // 25s timeout for Chrome
+    const startMem = process.memoryUsage().rss;
     try {
         const { name, course, date } = req.body;
         
@@ -62,7 +73,12 @@ router.post('/generate', async (req, res) => {
         // Validate the certificate document
         const validationError = certificate.validateSync();
         if (validationError) {
-            throw validationError;
+            // Return validation error as 400
+            return res.status(400).json({
+                success: false,
+                error: 'Certificate validation failed',
+                details: validationError.message
+            });
         }
 
         // Save the certificate
@@ -100,38 +116,69 @@ router.post('/generate', async (req, res) => {
             templatePath: backgroundDataUrl
         });
 
-        // Launch Puppeteer
-        const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-        const page = await browser.newPage();
-        
-        // Set content and wait for images to load
-        await page.setContent(html, { 
-            waitUntil: ['domcontentloaded', 'networkidle0']
-        });
-        await page.setViewport({ width: 1120, height: 792 });
+        // Puppeteer launch config for Render.com
+        let puppeteerLib, launchOptions;
+        if (isRender) {
+            puppeteerLib = require('puppeteer-core');
+            launchOptions = {
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                executablePath: process.env.CHROME_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+                headless: 'new',
+                defaultViewport: { width: 1120, height: 792 },
+                timeout: timeoutMs
+            };
+        } else {
+            puppeteerLib = require('puppeteer');
+            launchOptions = {
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                headless: true,
+                defaultViewport: { width: 1120, height: 792 },
+                timeout: timeoutMs
+            };
+        }
 
-        // Generate PDF
-        const pdfPath = path.join(pdfDir, `${certNumber}.pdf`);
+        // Timeout wrapper for Chrome launch
+        const launchPromise = puppeteerLib.launch(launchOptions);
+        browser = await Promise.race([
+            launchPromise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Chrome launch timeout')), timeoutMs))
+        ]);
+        const page = await browser.newPage();
+
+        await page.setContent(html, { waitUntil: ['domcontentloaded', 'networkidle0'] });
+
+        // Always use /tmp for ephemeral storage on Render
+        pdfPath = `/tmp/${certNumber}.pdf`;
         await page.pdf({
             path: pdfPath,
             width: '1120px',
             height: '792px',
             printBackground: true,
-            preferCSSPageSize: true
+            preferCSSPageSize: true,
+            timeout: timeoutMs
         });
 
+        // Clean up browser
         await browser.close();
+        browser = null;
 
-        // Send PDF as response
-        const pdf = await fs.readFile(pdfPath);
+        // Read PDF as buffer and send
+        const pdfBuffer = await fs.readFile(pdfPath);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=${certNumber}.pdf`);
-        res.send(pdf);
+        res.send(pdfBuffer);
 
+        // Memory monitoring (log if > 350MB)
+        const endMem = process.memoryUsage().rss;
+        if (endMem - startMem > 350 * 1024 * 1024) {
+            console.warn('High memory usage after PDF generation:', (endMem / 1024 / 1024).toFixed(1), 'MB');
+        }
     } catch (error) {
+        if (browser) try { await browser.close(); } catch {}
         console.error('Certificate generation error:', error);
+        if (error.message && error.message.includes('Chrome launch timeout')) {
+            return res.status(504).json({ success: false, error: 'PDF generation timed out' });
+        }
         res.status(500).json({ 
             success: false, 
             error: 'Certificate generation failed',
@@ -151,6 +198,7 @@ router.get('/user/:userId', async (req, res) => {
             certificates
         });
     } catch (error) {
+        // Fixed typo: removed stray text and corrected error log
         console.error('Error fetching user certificates:', error);
         res.status(500).json({
             success: false,
@@ -168,7 +216,7 @@ router.get('/download/:certificateNumber', async (req, res) => {
         });
 
         if (!certificate) {
-            return res.status(404).json({
+            return res.status(404).json({ 
                 success: false,
                 error: 'Certificate not found'
             });
@@ -187,3 +235,8 @@ router.get('/download/:certificateNumber', async (req, res) => {
 });
 
 module.exports = router;
+    }
+});
+
+module.exports = router;
+

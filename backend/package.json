@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "setup": "node scripts/setup-videos.js"
+    "setup": "node scripts/setup-videos.js",
+    "postinstall": "apt-get update && apt-get install -y chromium"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "@sendgrid/mail": "^8.1.5",
     "bcryptjs": "^2.4.3",
     "canvas": "^3.1.0",
+    "chrome-aws-lambda": "10.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -23,7 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.2",
     "nodemon": "^3.1.10",
-    "puppeteer": "^24.10.1",
+    "puppeteer-core": "10.1.0",
     "razorpay": "^2.9.6",
     "recharts": "^2.15.3",
     "uuid": "^11.1.0"

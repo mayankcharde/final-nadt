@@ -32,7 +32,15 @@ export default function CertificateButton({ courseName, userName }) {
             });
 
             if (!response.ok) {
-                throw new Error('Certificate generation failed');
+                // Try to parse error message from backend
+                let errorMsg = 'Certificate generation failed';
+                try {
+                    const errJson = await response.json();
+                    errorMsg = errJson.details || errJson.error || errorMsg;
+                } catch {
+                    // Ignore JSON parse errors
+                }
+                throw new Error(errorMsg);
             }
 
             // Get the blob from the response
@@ -54,7 +62,7 @@ export default function CertificateButton({ courseName, userName }) {
             toast.success('Certificate downloaded successfully!');
         } catch (error) {
             console.error('Download error:', error);
-            toast.error('Failed to download certificate');
+            toast.error(error.message || 'Failed to download certificate');
         } finally {
             setLoading(false);
         }

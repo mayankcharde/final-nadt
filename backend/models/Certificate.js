@@ -18,8 +18,9 @@ const CertificateSchema = new mongoose.Schema({
         trim: true,
         minlength: [2, 'Name must be at least 2 characters long'],
         validate: {
+            // Allow letters, spaces, dots, hyphens, and apostrophes
             validator: function(v) {
-                return /^[a-zA-Z\s]+$/.test(v);
+                return /^[a-zA-Z\s.'-]+$/.test(v);
             },
             message: props => `${props.value} is not a valid name!`
         }

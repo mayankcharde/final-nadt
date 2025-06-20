@@ -1,6 +1,14 @@
-const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs').promises;
+
+let chromium = null;
+let isRender = false;
+try {
+    chromium = require('chrome-aws-lambda');
+    isRender = process.env.RENDER === 'true' || process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.CHROME_AWS_LAMBDA_VERSION;
+} catch (e) {
+    // chrome-aws-lambda not available locally
+}
 
 async function generateReceiptPDF({ name, email, paymentId, orderId, amount, courseId, date, logoUrl, pdfPath }) {
     const html = `
@@ -48,16 +56,42 @@ async function generateReceiptPDF({ name, email, paymentId, orderId, amount, cou
 
     await fs.mkdir(path.dirname(pdfPath), { recursive: true });
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-    await page.pdf({
-        path: pdfPath,
-        format: 'A4',
-        printBackground: true,
-        margin: { top: '40px', bottom: '40px', left: '0', right: '0' }
-    });
-    await browser.close();
+    let puppeteerLib, launchOptions;
+    if (isRender) {
+        puppeteerLib = require('puppeteer-core');
+        launchOptions = {
+            args: chromium.args,
+            executablePath: await chromium.executablePath,
+            headless: chromium.headless,
+            defaultViewport: { width: 800, height: 1120 },
+            timeout: 20000
+        };
+    } else {
+        puppeteerLib = require('puppeteer');
+        launchOptions = {
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            headless: true,
+            defaultViewport: { width: 800, height: 1120 },
+            timeout: 20000
+        };
+    }
+
+    let browser = null;
+    try {
+        browser = await puppeteerLib.launch(launchOptions);
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: 'networkidle0' });
+        await page.pdf({
+            path: pdfPath,
+            format: 'A4',
+            printBackground: true,
+            margin: { top: '40px', bottom: '40px', left: '0', right: '0' }
+        });
+        await browser.close();
+    } catch (err) {
+        if (browser) try { await browser.close(); } catch {}
+        throw err;
+    }
 }
 
 module.exports = generateReceiptPDF;

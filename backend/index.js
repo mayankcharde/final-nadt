@@ -53,3 +53,10 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+
+setInterval(() => {
+    const mem = process.memoryUsage().rss / 1024 / 1024;
+    if (mem > 350) {
+        console.warn('Memory usage warning:', mem.toFixed(1), 'MB');
+    }
+}, 60000);
