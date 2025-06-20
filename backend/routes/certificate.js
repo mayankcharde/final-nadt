@@ -21,6 +21,19 @@ const generateCertNumber = () => {
 
 const isRender = process.env.RENDER === 'true' || process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.CHROME_AWS_LAMBDA_VERSION;
 
+const CERT_DIR = path.join(__dirname, '..', 'generated-certificates');
+
+// Utility to ensure directory exists
+async function ensureCertDir() {
+    try {
+        await fs.mkdir(CERT_DIR, { recursive: true });
+    } catch (err) {
+        console.error('Failed to create certificates directory:', err);
+        throw err;
+    }
+}
+
+// Certificate generation endpoint
 router.post('/generate', async (req, res) => {
     let browser = null;
     let pdfPath = '';
@@ -57,8 +70,10 @@ router.post('/generate', async (req, res) => {
             throw new Error('User does not have access to this course');
         }
 
+        await ensureCertDir();
         // Generate unique certificate number
         const certNumber = generateCertNumber();
+        pdfPath = path.join(CERT_DIR, `${certNumber}.pdf`);
         
         // Create certificate record first to validate
         const certificate = new Certificate({
@@ -67,7 +82,7 @@ router.post('/generate', async (req, res) => {
             userName: name.trim(), // Ensure name is trimmed
             certificateNumber: certNumber,
             completionDate: new Date(),
-            pdfPath: path.join(__dirname, '..', 'generated-certificates', `${certNumber}.pdf`)
+            pdfPath
         });
 
         // Validate the certificate document
@@ -144,11 +159,17 @@ router.post('/generate', async (req, res) => {
         await browser.close();
         browser = null;
 
-        // Read PDF as buffer and send
-        const pdfBuffer = await fs.readFile(pdfPath);
+        // Wait for file to exist before sending (stateless: send directly)
+        await fs.access(pdfPath);
+
+        // Send PDF directly in response (stateless best practice)
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=${certNumber}.pdf`);
-        res.send(pdfBuffer);
+        const fileBuffer = await fs.readFile(pdfPath);
+        res.send(fileBuffer);
+
+        // Optionally: delete the file after sending if you want to keep storage clean
+        // await fs.unlink(pdfPath);
 
         // Memory monitoring (log if > 350MB)
         const endMem = process.memoryUsage().rss;
@@ -190,24 +211,25 @@ router.get('/user/:userId', async (req, res) => {
     }
 });
 
-// Download certificate endpoint
+// Download certificate endpoint (stateless: check file existence, send or error)
 router.get('/download/:certificateNumber', async (req, res) => {
     try {
-        const certificate = await Certificate.findOne({ 
-            certificateNumber: req.params.certificateNumber 
-        });
-
-        if (!certificate) {
-            return res.status(404).json({ 
-                success: false,
-                error: 'Certificate not found'
-            });
+        const certNumber = req.params.certificateNumber;
+        const pdfPath = path.join(CERT_DIR, `${certNumber}.pdf`);
+        try {
+            await fs.access(pdfPath);
+        } catch (err) {
+            return res.status(404).json({ success: false, error: 'Certificate file not found' });
         }
-
-        const pdfPath = certificate.pdfPath;
-        res.download(pdfPath);
+        res.download(pdfPath, `${certNumber}.pdf`, err => {
+            if (err) {
+                console.error('Download error:', err);
+                if (!res.headersSent) {
+                    res.status(500).json({ success: false, error: 'Failed to download certificate' });
+                }
+            }
+        });
     } catch (error) {
-        console.error('Certificate download error:', error);
         res.status(500).json({
             success: false,
             error: 'Failed to download certificate',
