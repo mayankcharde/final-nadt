@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "setup": "node scripts/setup-videos.js",
-    "postinstall": "apt-get update && apt-get install -y chromium"
+    "setup": "node scripts/setup-videos.js"
+ 
   },
   "keywords": [],
   "author": "",

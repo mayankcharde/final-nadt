@@ -116,35 +116,17 @@ router.post('/generate', async (req, res) => {
             templatePath: backgroundDataUrl
         });
 
-        // Puppeteer launch config for Render.com
-        let puppeteerLib, launchOptions;
-        if (isRender) {
-            puppeteerLib = require('puppeteer-core');
-            launchOptions = {
-                args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                executablePath: process.env.CHROME_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
-                headless: 'new',
-                defaultViewport: { width: 1120, height: 792 },
-                timeout: timeoutMs
-            };
-        } else {
-            puppeteerLib = require('puppeteer');
-            launchOptions = {
-                args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                headless: true,
-                defaultViewport: { width: 1120, height: 792 },
-                timeout: timeoutMs
-            };
-        }
+        // Use chrome-aws-lambda's puppeteer and executablePath for maximum compatibility
+        const chromium = require('chrome-aws-lambda');
+        browser = await chromium.puppeteer.launch({
+            args: [...chromium.args, '--no-sandbox'],
+            executablePath: await chromium.executablePath,
+            headless: true,
+            defaultViewport: { width: 1120, height: 792 },
+            timeout: timeoutMs
+        });
 
-        // Timeout wrapper for Chrome launch
-        const launchPromise = puppeteerLib.launch(launchOptions);
-        browser = await Promise.race([
-            launchPromise,
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Chrome launch timeout')), timeoutMs))
-        ]);
         const page = await browser.newPage();
-
         await page.setContent(html, { waitUntil: ['domcontentloaded', 'networkidle0'] });
 
         // Always use /tmp for ephemeral storage on Render
@@ -235,8 +217,7 @@ router.get('/download/:certificateNumber', async (req, res) => {
 });
 
 module.exports = router;
-    }
-});
 
-module.exports = router;
+
+
 
