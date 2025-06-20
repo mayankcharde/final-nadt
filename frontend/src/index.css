@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-gov-surface-900 via-black to-gov-surface-900 text-gov-surface-50;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white font-display tracking-tight;
+  }
+
+  a {
+    @apply text-gov-primary-500 hover:text-gov-accent-400 transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-gradient-to-r from-gov-primary-500 via-gov-primary-400 to-gov-accent-400 
+           text-white rounded-xl
+           font-medium shadow-lg shadow-gov-primary-500/20
+           transition-all duration-300
+           hover:shadow-xl hover:shadow-gov-primary-500/30 hover:-translate-y-0.5
+           active:transform active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gov-surface-800/80 backdrop-blur-sm text-white rounded-xl
+           font-medium border border-gov-primary-500/20
+           transition-all duration-300 
+           hover:border-gov-primary-500/50 hover:bg-gov-surface-800 hover:-translate-y-0.5
+           active:transform active:scale-95;
+  }
+
+  .card {
+    @apply bg-gov-surface-800/80 backdrop-blur-sm rounded-2xl 
+           border border-gov-primary-500/10
+           shadow-xl shadow-gov-primary-500/5 
+           hover:shadow-2xl hover:shadow-gov-primary-500/10
+           hover:border-gov-primary-500/20
+           transition-all duration-300;
+  }
+
+  .input {
+    @apply w-full px-4 py-2 bg-white/10 border border-gov-border 
+           rounded-lg transition-all duration-300 
+           text-white placeholder-gray-400
+           focus:outline-none focus:ring-2 focus:ring-gov-primary-500 
+           focus:border-gov-primary-500;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-gov-primary-500/10 
+           shadow-xl shadow-gov-primary-500/5
+           transition-all duration-300 
+           hover:shadow-2xl hover:shadow-gov-primary-500/10
+           hover:border-gov-primary-500/20;
+  }
+
+  .modern-gradient {
+    @apply bg-gradient-to-r from-gov-primary-500 via-gov-primary-400 to-gov-accent-400;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 20px rgba(0, 111, 238, 0.2);
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-gov-primary-400 via-white to-gov-accent-400 
+           bg-clip-text text-transparent;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .dark-gradient {
+    @apply bg-gradient-to-br from-black via-gov-surface-900 to-black;
+  }
+
+  .dark-gradient-radial {
+    @apply bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gov-surface-800 via-black to-black;
+  }
+
+  .glow-effect {
+    @apply relative;
+    &::after {
+      content: '';
+      @apply absolute inset-0 bg-gradient-to-t from-gov-primary-500/20 to-transparent opacity-0 transition-opacity duration-500;
+    }
+    &:hover::after {
+      @apply opacity-100;
+    }
+  }
+
+  .text-shadow-cyber {
+    text-shadow: 0 0 10px #00fff5, 
+                0 0 20px #00fff5, 
+                0 0 30px #00fff5;
+  }
+
+  .drop-shadow-glow {
+    filter: drop-shadow(0 0 10px rgba(0, 255, 245, 0.3));
+  }
+
+  .drop-shadow-glow-lg {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 245, 0.5));
+  }
+
+  /* Cyberpunk graph effects */
+  .graph-container {
+    @apply relative overflow-hidden rounded-xl;
+    &::before {
+      content: '';
+      @apply absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-cyan-500/5 animate-gradient-xy;
+    }
+  }
+
+  .cyber-glow {
+    filter: drop-shadow(0 0 10px rgba(0, 255, 245, 0.3))
+            drop-shadow(0 0 20px rgba(0, 255, 245, 0.2));
+  }
+
+  .cyber-text {
+    @apply font-bold tracking-wider;
+    text-shadow: 0 0 10px rgba(0, 255, 245, 0.5),
+                 0 0 20px rgba(0, 255, 245, 0.3);
+  }
+
+  .cyber-pulse {
+    animation: cyber-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .cyber-grid {
+    background-image: linear-gradient(rgba(0, 255, 245, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 255, 245, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    @apply opacity-20;
+  }
+
+  .data-point {
+    @apply transition-all duration-300;
+    &:hover {
+      filter: drop-shadow(0 0 15px rgba(0, 255, 245, 0.8));
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: .2;
+    }
+  }
+
+  @keyframes cyber-pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(0.98);
+    }
+  }
+
+  .animate-gradient-xy {
+    animation: gradient-xy 15s ease infinite;
+    background-size: 400% 400%;
+  }
+
+  .animate-cyber-float {
+    animation: cyber-float 3s ease-in-out infinite;
+  }
+
+  @keyframes cyber-float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
+
+

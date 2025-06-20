@@ -1,0 +1,4 @@
+# Video files
+backend/videos/**/*.mp4
+# Allow default video to be committed
+!backend/videos/default.mp4

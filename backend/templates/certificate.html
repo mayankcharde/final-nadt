@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 1120px;
+            height: 792px;
+            position: relative;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(120deg, #18181b 0%, #23272f 100%);
+            color: #f3f4f6;
+            overflow: hidden;
+        }
+        /* Animated gradient overlay */
+        .animated-bg {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            left: -10%;
+            top: -10%;
+            z-index: 0;
+            background: linear-gradient(120deg, #2563eb 0%, #ffd700 100%);
+            opacity: 0.08;
+            filter: blur(40px);
+            animation: gradientMove 8s ease-in-out infinite alternate;
+        }
+        @keyframes gradientMove {
+            0% { transform: scale(1) translate(0, 0);}
+            100% { transform: scale(1.1) translate(40px, 30px);}
+        }
+        .certificate-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            opacity: 0.12;
+            filter: grayscale(0.2) brightness(0.7);
+        }
+        /* Neon Glow Border */
+        .glass-card {
+            position: absolute;
+            top: 60px;
+            left: 60px;
+            width: 1000px;
+            height: 672px;
+            background: rgba(30, 41, 59, 0.92);
+            border-radius: 36px;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.38), 0 0 32px 4px #2563eb88, 0 0 0 8px #ffd70033;
+            backdrop-filter: blur(12px);
+            border: 3px solid;
+            border-image: linear-gradient(90deg, #ffd700 0%, #2563eb 100%) 1;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        /* Glass reflection overlay */
+        .glass-reflection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1000px;
+            height: 672px;
+            pointer-events: none;
+            z-index: 5;
+            background: linear-gradient(120deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 60%, rgba(255,255,255,0.18) 100%);
+            border-radius: 36px;
+            mix-blend-mode: lighten;
+        }
+        /* Floating geometric shapes */
+        .shape {
+            position: absolute;
+            z-index: 3;
+            opacity: 0.13;
+            pointer-events: none;
+        }
+        .shape1 {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: radial-gradient(circle, #ffd700 0%, #2563eb 100%);
+            top: 80px; left: 120px;
+            animation: float1 7s ease-in-out infinite alternate;
+        }
+        .shape2 {
+            width: 80px; height: 80px; border-radius: 24px;
+            background: linear-gradient(135deg, #2563eb 0%, #ffd700 100%);
+            bottom: 120px; right: 160px;
+            animation: float2 6s ease-in-out infinite alternate;
+        }
+        .shape3 {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, #fff 0%, #2563eb 100%);
+            top: 180px; right: 100px;
+            animation: float3 8s ease-in-out infinite alternate;
+        }
+        @keyframes float1 { 0%{transform:translateY(0);} 100%{transform:translateY(30px);} }
+        @keyframes float2 { 0%{transform:translateY(0);} 100%{transform:translateY(-24px);} }
+        @keyframes float3 { 0%{transform:translateX(0);} 100%{transform:translateX(-24px);} }
+        .badge {
+            position: absolute;
+            top: 32px;
+            right: 48px;
+            z-index: 10;
+            background: linear-gradient(90deg, #ffd700 0%, #2563eb 100%);
+            color: #18181b;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 10px 32px 10px 24px;
+            border-radius: 24px 8px 24px 8px;
+            box-shadow: 0 2px 12px 0 #ffd70055;
+            letter-spacing: 1px;
+            border: 2px solid #fffbe6;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-18deg);
+            font-size: 100px;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            opacity: 0.06;
+            font-weight: 900;
+            letter-spacing: 8px;
+            pointer-events: none;
+            z-index: 3;
+            user-select: none;
+        }
+        .certificate-header {
+            margin-top: 48px;
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(191,161,74,0.18);
+            z-index: 4;
+        }
+        .divider {
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700 0%, #2563eb 100%);
+            border-radius: 2px;
+            margin: 28px auto 36px auto;
+            z-index: 4;
+        }
+        .completion-text {
+            font-size: 22px;
+            color: #cbd5e1;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+            font-weight: 500;
+            z-index: 4;
+        }
+        .name {
+            font-family: 'Playfair Display', serif;
+            font-size: 54px;
+            color: #60a5fa;
+            text-transform: capitalize;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            text-shadow: 0 2px 8px rgba(37,99,235,0.18);
+            z-index: 4;
+        }
+        .course-label {
+            font-size: 20px;
+            color: #ffd700;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            z-index: 4;
+        }
+        .course {
+            font-size: 32px;
+            font-weight: 700;
+            color: #f3f4f6;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 38px;
+            z-index: 4;
+        }
+        .footer-row {
+            display: flex;
+            width: 90%;
+            justify-content: space-between;
+            align-items: flex-end;
+            position: absolute;
+            bottom: 48px;
+            left: 5%;
+            z-index: 4;
+        }
+        .date {
+            font-size: 20px;
+            color: #cbd5e1;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .cert-number {
+            font-size: 15px;
+            color: #ffd700;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .signature-area {
+            position: absolute;
+            right: 80px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+        }
+        .signature-line {
+            width: 220px;
+            border-bottom: 2.5px solid #ffd700;
+            margin-bottom: 8px;
+            margin-top: 32px;
+        }
+        .signature-label {
+            font-size: 16px;
+            color: #ffd700;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .signature-handwritten {
+            font-family: 'Pacifico', cursive;
+            font-size: 32px;
+            color: #ffd700;
+            margin-bottom: -8px;
+            margin-top: 2px;
+            text-shadow: 0 2px 8px rgba(191,161,74,0.18);
+        }
+        .qr-area {
+            position: absolute;
+            left: 80px;
+            bottom: 120px;
+            width: 90px;
+            height: 90px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 4;
+            border: 1.5px solid #ffd700;
+            box-shadow: 0 2px 12px 0 #2563eb33;
+            flex-direction: column;
+        }
+        .qr-placeholder {
+            width: 64px;
+            height: 64px;
+            background: repeating-linear-gradient(135deg, #ffd700 0 4px, #23272f 4px 8px);
+            border-radius: 8px;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #ffd700;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .qr-label {
+            font-size: 11px;
+            color: #ffd700;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .qr-icon {
+            font-size: 13px;
+            margin-right: 2px;
+        }
+        /* Responsive for PDF rendering */
+        @media print {
+            .animated-bg { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <img src="{{templatePath}}" class="certificate-bg" />
+    <div class="glass-card">
+        <div class="badge">VERIFIED</div>
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+        <div class="glass-reflection"></div>
+        <div class="watermark">NADT</div>
+        <div class="certificate-header">Certificate of Completion</div>
+        <div class="divider"></div>
+        <div class="completion-text">This is to certify that</div>
+        <div class="name">{{name}}</div>
+        <div class="course-label">has successfully completed the course</div>
+        <div class="course">{{course}}</div>
+        <div class="signature-area">
+            <div class="signature-handwritten">A. Sharma</div>
+            <div class="signature-line"></div>
+            <div class="signature-label">Authorized Signature</div>
+        </div>
+        <div class="qr-area">
+            <div class="qr-placeholder">QR</div>
+            <div class="qr-label"><span class="qr-icon">&#128247;</span>Scan to verify</div>
+        </div>
+        <div class="footer-row">
+            <div class="cert-number">Certificate No: {{certNumber}}</div>
+            <div class="date">{{date}}</div>
+        </div>
+    </div>
+</body>
+</html>
