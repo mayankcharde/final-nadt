@@ -211,33 +211,6 @@ router.get('/user/:userId', async (req, res) => {
     }
 });
 
-// Download certificate endpoint (stateless: check file existence, send or error)
-router.get('/download/:certificateNumber', async (req, res) => {
-    try {
-        const certNumber = req.params.certificateNumber;
-        const pdfPath = path.join(CERT_DIR, `${certNumber}.pdf`);
-        try {
-            await fs.access(pdfPath);
-        } catch (err) {
-            return res.status(404).json({ success: false, error: 'Certificate file not found' });
-        }
-        res.download(pdfPath, `${certNumber}.pdf`, err => {
-            if (err) {
-                console.error('Download error:', err);
-                if (!res.headersSent) {
-                    res.status(500).json({ success: false, error: 'Failed to download certificate' });
-                }
-            }
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: 'Failed to download certificate',
-            details: error.message
-        });
-    }
-});
-
 module.exports = router;
 
 
