@@ -132,7 +132,7 @@ export default function ProductCard2() {
 
                 {/* Price  */}
                 <p>
-                    ₹550 <span className="line-through">₹999</span>
+                    ₹1 <span className="line-through">₹999</span>
                 </p>
             </div>
 
