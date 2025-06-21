@@ -362,6 +362,55 @@ export default function Dashboard() {
         }
     }, []);
 
+    useEffect(() => {
+        const fetchUsers = async () => {
+            if (activeSection === 'participants') {
+                setUserStatsLoading(true);
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                        navigate('/login');
+                        return;
+                    }
+                    const response = await fetch(
+                        `${import.meta.env.VITE_BACKEND_HOST_URL}/api/auth/users`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    if (data.success && Array.isArray(data.users)) {
+                        setUsers(data.users);
+                        // Calculate stats
+                        const now = new Date();
+                        const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+                        setUserStats({
+                            total: data.users.length,
+                            activeToday: data.users.length, // Placeholder, update if backend supports
+                            newThisWeek: data.users.filter(user => new Date(user.joinedDate) > oneWeekAgo).length
+                        });
+                    } else {
+                        setUsers([]);
+                        setUserStats({ total: 0, activeToday: 0, newThisWeek: 0 });
+                        throw new Error(data.error || 'Failed to fetch users');
+                    }
+                } catch (error) {
+                    console.error('Error fetching users:', error);
+                    toast.error('Failed to load participants');
+                } finally {
+                    setUserStatsLoading(false);
+                }
+            }
+        };
+        fetchUsers();
+    }, [activeSection, navigate]);
+
     // Main render
     return (
         <div className="flex min-h-screen bg-black text-white">
@@ -369,7 +418,17 @@ export default function Dashboard() {
             <div className={`fixed md:static w-[280px] bg-black/40 backdrop-blur-xl 
                 min-h-screen shadow-xl z-50 transition-all duration-300 transform border-r border-gov-border/10
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-                <div className="p-6">
+                {/* Mobile close button */}
+                <div className="flex justify-end md:hidden">
+                    <button
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="p-2 m-2 rounded-lg hover:bg-white/10 text-white text-2xl focus:outline-none"
+                        aria-label="Close sidebar"
+                    >
+                        &#10005;
+                    </button>
+                </div>
+                <div className="p-6 pt-2 md:pt-6">
                     <h1 className="text-xl font-display font-bold text-gradient mb-8">
                         National Academy of Direct Taxes
                     </h1>
