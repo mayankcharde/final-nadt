@@ -75,16 +75,134 @@ export default function Dashboard() {
         completionChange: 0
     });
     const [certificates, setCertificates] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [userStatsLoading, setUserStatsLoading] = useState(false);
-    const [userStats, setUserStats] = useState({
+    const [users] = useState([]); // Remove setUsers
+    const [userStatsLoading] = useState(false); // Remove setUserStatsLoading
+    const [userStats] = useState({
         total: 0,
         activeToday: 0,
         newThisWeek: 0
-    });
+    }); // Remove setUserStats
     const [coursePopularity, setCoursePopularity] = useState([]);
-    // const [receipts, setReceipts] = useState([]);
+    const [purchasedCourses, setPurchasedCourses] = useState([]);
     const { shouldRefresh } = useDashboard();
+
+    const sections = [
+        { id: 'dashboard', name: 'Dashboard', icon: '📊' },
+        { id: 'mycourses', name: 'My Courses', icon: '📚' },
+        { id: 'courses', name: 'Buy Courses', icon: '🛒' },
+        { id: 'payments', name: 'Payments', icon: '💳' },
+        { id: 'certificates', name: 'Certificates', icon: '📜' },
+        { id: 'participants', name: 'Participants', icon: '👥' },
+        { id: 'analytics', name: 'Analytics', icon: '📈' }
+    ];
+
+    const handleSectionChange = (sectionId) => {
+        setActiveSection(sectionId);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        toast.success('Logged out successfully');
+        navigate('/login');
+    };
+
+    const fetchCertificates = async () => {
+        if (activeSection === 'certificates') {
+            try {
+                const userId = JSON.parse(atob(localStorage.getItem('token').split('.')[1])).userId;
+                const response = await fetch(
+                    `${import.meta.env.VITE_BACKEND_HOST_URL}/api/certificate/user/${userId}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                );
+                const data = await response.json();
+                setCertificates(data.certificates || []);
+            } catch (error) {
+                console.error('Error fetching certificates:', error);
+                toast.error('Failed to load certificates');
+            }
+        }
+    };
+
+    const fetchPurchasedCourses = async () => {
+        if (activeSection === 'mycourses') {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('No auth token');
+                }
+                const userId = JSON.parse(atob(token.split('.')[1])).userId;
+                const response = await fetch(
+                    `${import.meta.env.VITE_BACKEND_HOST_URL}/api/payment/purchased-courses/${userId}`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to fetch courses');
+                }
+                setPurchasedCourses(data.courses || []);
+            } catch (error) {
+                console.error('Error fetching purchased courses:', error);
+                toast.error('Failed to load purchased courses');
+                setPurchasedCourses([]);
+            }
+        }
+    };
+
+    const renderPurchasedCourses = () => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {purchasedCourses.length > 0 ? (
+                purchasedCourses.map((course) => (
+                    <div key={course._id} 
+                        className="bg-gov-surface-800 rounded-xl shadow-lg overflow-hidden 
+                            hover:shadow-xl transition-all duration-300 border border-gov-border"
+                    >
+                        <div className="relative h-48">
+                            <img
+                                src={course.courseDetails.image}
+                                alt={course.courseName}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div className="p-6">
+                            <h3 className="text-xl font-bold text-gov-surface-50 mb-4">
+                                {course.courseName}
+                            </h3>
+                            <button
+                                onClick={() => navigate(`/course/${course.courseName}`)}
+                                className="w-full bg-gov-primary-600 text-gov-surface-50 py-3 px-4 rounded-lg 
+                                    font-semibold transition-all duration-300
+                                    hover:bg-gov-primary-500 hover:shadow-lg hover:shadow-gov-primary-600/20 
+                                    hover:translate-y-[-2px]
+                                    active:transform active:scale-98 active:translate-y-0
+                                    focus:outline-none focus:ring-2 focus:ring-gov-primary-500 focus:ring-offset-2
+                                    focus:ring-offset-gov-surface-800"
+                            >
+                                Continue Learning
+                            </button>
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500">
+                    <p>You haven't purchased any courses yet.</p>
+                    <button
+                        onClick={() => setActiveSection('courses')}
+                        className="mt-4 text-primary-600 hover:text-primary-700 font-medium"
+                    >
+                        Browse Available Courses
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 
     useEffect(() => {
         const fetchCoursePopularity = async () => {
@@ -230,111 +348,10 @@ export default function Dashboard() {
         fetchDashboardStats();
     }, [activeSection, navigate, shouldRefresh]);
 
-    // Removed fetchPurchasedCourses because purchasedCourses state is unused.
-    const fetchCertificates = async () => {
-        if (activeSection === 'certificates') {
-            try {
-                const userId = JSON.parse(atob(localStorage.getItem('token').split('.')[1])).userId;
-                const response = await fetch(
-                    `${import.meta.env.VITE_BACKEND_HOST_URL}/api/certificate/user/${userId}`,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`
-                        }
-                    }
-                );
-                const data = await response.json();
-                setCertificates(data.certificates || []);
-            } catch (error) {
-                console.error('Error fetching certificates:', error);
-                toast.error('Failed to load certificates');
-            }
-        }
-    };
-
     useEffect(() => {
-        const fetchUsers = async () => {
-            if (activeSection === 'participants') {
-                setUserStatsLoading(true);
-                try {
-                    const token = localStorage.getItem('token');
-                    if (!token) {
-                        navigate('/login');
-                        return;
-                    }
-
-                    const response = await fetch(
-                        `${import.meta.env.VITE_BACKEND_HOST_URL}/api/auth/users`, 
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Content-Type': 'application/json'
-                            }
-                        }
-                    );
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    if (data.success) {
-                        setUsers(data.users);
-                        
-                        // Calculate stats
-                        const now = new Date();
-                        const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-                        
-                        setUserStats({
-                            total: data.users.length,
-                            activeToday: data.users.length, // This would need backend support for actual active users
-                            newThisWeek: data.users.filter(user => 
-                                new Date(user.joinedDate) > oneWeekAgo
-                            ).length
-                        });
-                    } else {
-                        throw new Error(data.error || 'Failed to fetch users');
-                    }
-                } catch (error) {
-                    console.error('Error fetching users:', error);
-                    toast.error('Failed to load participants');
-                } finally {
-                    setUserStatsLoading(false);
-                }
-            }
-        };
-
-        fetchUsers();
-    }, [activeSection, navigate]);
-
-    useEffect(() => {
+        fetchPurchasedCourses();
         fetchCertificates();
-    }, [activeSection, shouldRefresh]); // Add shouldRefresh dependency
-
-    // Removed unused receipts fetching logic
-
-    // Move section change logic to a separate function
-    const handleSectionChange = (sectionId) => {
-        setActiveSection(sectionId);
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        toast.success('Logged out successfully');
-        navigate('/login');
-    };
-
-    const sections = [
-        { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-        { id: 'mycourses', name: 'My Courses', icon: '📚' },
-        { id: 'courses', name: 'Buy Courses', icon: '🛒' },
-        { id: 'payments', name: 'Payments', icon: '💳' },
-        { id: 'certificates', name: 'Certificates', icon: '📜' },
-        { id: 'participants', name: 'Participants', icon: '👥' },
-        { id: 'analytics', name: 'Analytics', icon: '📈' }
-    ];
-
-    // Removed unused renderPurchasedCourses function to fix unused variable error.
+    }, [activeSection, shouldRefresh]);
 
     useEffect(() => {
         // Check URL params for section
@@ -347,7 +364,7 @@ export default function Dashboard() {
 
     // Main render
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-black text-white">
             {/* Sidebar */}
             <div className={`fixed md:static w-[280px] bg-black/40 backdrop-blur-xl 
                 min-h-screen shadow-xl z-50 transition-all duration-300 transform border-r border-gov-border/10
@@ -377,7 +394,7 @@ export default function Dashboard() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden bg-black text-white">
                 {/* Top Navigation */}
                 <nav className="bg-black/50 backdrop-blur-xl border-b border-gov-border/10">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -423,7 +440,7 @@ export default function Dashboard() {
                 </nav>
 
                 {/* Content Area */}
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-white">
                     <div className="space-y-6">
                         {activeSection === 'dashboard' && (
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -446,6 +463,7 @@ export default function Dashboard() {
                                     trend={`${dashboardStats.completionChange > 0 ? '+' : ''}${dashboardStats.completionChange}% vs last month`}
                                 />
                             </div>
+                            
                         )}
 
                         {activeSection === 'courses' && (
@@ -837,28 +855,16 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         )}
+
+                        {activeSection === 'mycourses' && (
+                            <div className="space-y-8">
+                                <h2 className="text-2xl font-bold text-gradient mb-8">My Courses</h2>
+                                {renderPurchasedCourses()}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
-        </div>
-    );
-}
-
-
-
-function DashboardCard({ title, value, icon, trend }) {
-    return (
-        <div className="glass-card p-6 hover-lift border border-gov-primary-500/10 
-            hover:border-gov-primary-500/20 transition-all duration-300">
-            <div className="flex items-center justify-between mb-4">
-                <span className="text-2xl">{icon}</span>
-                <span className="text-sm text-gov-primary-400 bg-gov-primary-500/10 
-                    px-2 py-1 rounded-full border border-gov-primary-500/20">
-                    {trend}
-                </span>
-            </div>
-            <h3 className="text-white/70 text-sm font-medium">{title}</h3>
-            <p className="text-3xl font-semibold text-white mt-2">{value}</p>
         </div>
     );
 }
