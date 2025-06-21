@@ -74,7 +74,6 @@ export default function Dashboard() {
         enrollmentsChange: 0,
         completionChange: 0
     });
-    const [purchasedCourses, setPurchasedCourses] = useState([]);
     const [certificates, setCertificates] = useState([]);
     const [users, setUsers] = useState([]);
     const [userStatsLoading, setUserStatsLoading] = useState(false);
@@ -84,7 +83,7 @@ export default function Dashboard() {
         newThisWeek: 0
     });
     const [coursePopularity, setCoursePopularity] = useState([]);
-    const [receipts, setReceipts] = useState([]);
+    // const [receipts, setReceipts] = useState([]);
     const { shouldRefresh } = useDashboard();
 
     useEffect(() => {
@@ -231,41 +230,7 @@ export default function Dashboard() {
         fetchDashboardStats();
     }, [activeSection, navigate, shouldRefresh]);
 
-    const fetchPurchasedCourses = async () => {
-        if (activeSection === 'mycourses') {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error('No auth token');
-                }
-
-                const userId = JSON.parse(atob(token.split('.')[1])).userId;
-                
-                const response = await fetch(
-                    `${import.meta.env.VITE_BACKEND_HOST_URL}/api/payment/purchased-courses/${userId}`,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }
-                );
-
-                const data = await response.json();
-                console.log('Fetched courses:', data); // Debug log
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Failed to fetch courses');
-                }
-
-                setPurchasedCourses(data.courses || []);
-            } catch (error) {
-                console.error('Error fetching purchased courses:', error);
-                toast.error('Failed to load purchased courses');
-                setPurchasedCourses([]);
-            }
-        }
-    };
-
+    // Removed fetchPurchasedCourses because purchasedCourses state is unused.
     const fetchCertificates = async () => {
         if (activeSection === 'certificates') {
             try {
@@ -343,44 +308,14 @@ export default function Dashboard() {
     }, [activeSection, navigate]);
 
     useEffect(() => {
-        fetchPurchasedCourses();
         fetchCertificates();
     }, [activeSection, shouldRefresh]); // Add shouldRefresh dependency
 
-    useEffect(() => {
-        const fetchReceipts = async () => {
-            if (activeSection === 'receipts') {
-                try {
-                    const token = localStorage.getItem('token');
-                    if (!token) return;
-                    const userId = JSON.parse(atob(token.split('.')[1])).userId;
-                    // Fetch receipts by userId (matches backend route)
-                    const response = await fetch(
-                        `${import.meta.env.VITE_BACKEND_HOST_URL}/api/payment/receipts/${userId}`,
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        }
-                    );
-                    const data = await response.json();
-                    setReceipts(data.receipts || []);
-                } catch (error) {
-                    console.error('Error fetching receipts:', error);
-                    setReceipts([]);
-                }
-            }
-        };
-        fetchReceipts();
-    }, [activeSection]);
+    // Removed unused receipts fetching logic
 
     // Move section change logic to a separate function
     const handleSectionChange = (sectionId) => {
         setActiveSection(sectionId);
-        // If changing to mycourses, force refresh
-        if (sectionId === 'mycourses') {
-            fetchPurchasedCourses();
-        }
     };
 
     const handleLogout = () => {
@@ -396,57 +331,10 @@ export default function Dashboard() {
         { id: 'payments', name: 'Payments', icon: '💳' },
         { id: 'certificates', name: 'Certificates', icon: '📜' },
         { id: 'participants', name: 'Participants', icon: '👥' },
-        { id: 'analytics', name: 'Analytics', icon: '📈' },
-        { id: 'receipts', name: 'Receipts', icon: '🧾' }
+        { id: 'analytics', name: 'Analytics', icon: '📈' }
     ];
 
-    const renderPurchasedCourses = () => (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {purchasedCourses.length > 0 ? (
-                purchasedCourses.map((course) => (
-                    <div key={course._id} 
-                        className="bg-gov-surface-800 rounded-xl shadow-lg overflow-hidden 
-                            hover:shadow-xl transition-all duration-300 border border-gov-border"
-                    >
-                        <div className="relative h-48">
-                            <img
-                                src={course.courseDetails.image}
-                                alt={course.courseName}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                        <div className="p-6">
-                            <h3 className="text-xl font-bold text-gov-surface-50 mb-4">
-                                {course.courseName}
-                            </h3>
-                            <button
-                                onClick={() => navigate(`/course/${course.courseName}`)}
-                                className="w-full bg-gov-primary-600 text-gov-surface-50 py-3 px-4 rounded-lg 
-                                    font-semibold transition-all duration-300
-                                    hover:bg-gov-primary-500 hover:shadow-lg hover:shadow-gov-primary-600/20 
-                                    hover:translate-y-[-2px]
-                                    active:transform active:scale-98 active:translate-y-0
-                                    focus:outline-none focus:ring-2 focus:ring-gov-primary-500 focus:ring-offset-2
-                                    focus:ring-offset-gov-surface-800"
-                            >
-                                Continue Learning
-                            </button>
-                        </div>
-                    </div>
-                ))
-            ) : (
-                <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500">
-                    <p>You haven't purchased any courses yet.</p>
-                    <button
-                        onClick={() => setActiveSection('courses')}
-                        className="mt-4 text-primary-600 hover:text-primary-700 font-medium"
-                    >
-                        Browse Available Courses
-                    </button>
-                </div>
-            )}
-        </div>
-    );
+    // Removed unused renderPurchasedCourses function to fix unused variable error.
 
     useEffect(() => {
         // Check URL params for section
@@ -457,16 +345,9 @@ export default function Dashboard() {
         }
     }, []);
 
+    // Main render
     return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gov-surface-900 to-black flex">
-            {/* Mobile Sidebar Overlay */}
-            {isSidebarOpen && (
-                <div 
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-                    onClick={() => setIsSidebarOpen(false)}
-                />
-            )}
-
+        <div className="flex min-h-screen">
             {/* Sidebar */}
             <div className={`fixed md:static w-[280px] bg-black/40 backdrop-blur-xl 
                 min-h-screen shadow-xl z-50 transition-all duration-300 transform border-r border-gov-border/10
@@ -956,76 +837,6 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         )}
-
-                        {activeSection === 'receipts' && (
-                            <div className="space-y-6">
-                                <h3 className="text-xl font-semibold text-white mb-4">Your Receipts</h3>
-                                <div className="bg-black/40 backdrop-blur-md rounded-xl shadow-lg overflow-hidden border border-white/10">
-                                    {receipts.length > 0 ? (
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full">
-                                                <thead className="bg-black/60">
-                                                    <tr>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider border-b border-white/10">
-                                                            Course
-                                                        </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider border-b border-white/10">
-                                                            Amount
-                                                        </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider border-b border-white/10">
-                                                            Date
-                                                        </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider border-b border-white/10">
-                                                            Order ID
-                                                        </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider border-b border-white/10">
-                                                            Download
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="divide-y divide-white/10">
-                                                    {receipts.map((receipt) => (
-                                                        <tr key={receipt.orderId} className="hover:bg-white/5 transition-colors">
-                                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                                <div className="text-sm font-medium text-white">
-                                                                    {receipt.courseId}
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                                <div className="text-sm text-gray-300">
-                                                                    ₹{receipt.amount}
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                                <div className="text-sm text-gray-300">
-                                                                    {new Date(receipt.date).toLocaleDateString('en-IN', {
-                                                                        day: 'numeric',
-                                                                        month: 'short',
-                                                                        year: 'numeric'
-                                                                    })}
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                                <div className="text-xs text-gray-400 break-all">{receipt.orderId}</div>
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                                <DownloadReceiptButton orderId={receipt.orderId} disabled={false} />
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    ) : (
-                                        <div className="text-center py-8 text-gray-400">
-                                            No receipts found
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {activeSection === 'mycourses' && renderPurchasedCourses()}
                     </div>
                 </div>
             </div>
@@ -1051,11 +862,3 @@ function DashboardCard({ title, value, icon, trend }) {
         </div>
     );
 }
-
-
-
-
-
-
-
-

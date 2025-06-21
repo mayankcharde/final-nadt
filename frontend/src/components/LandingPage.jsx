@@ -76,8 +76,9 @@ export default function LandingPage() {
                             <img 
                                 src={nadtLogo} 
                                 alt="NADT Logo" 
-                                className="h-28 w-28 md:h-32 md:w-32 object-contain filter brightness-125 hover:brightness-150 
-                                        transition-all duration-300 drop-shadow-2xl" /* Increased size more */
+                                className="h-28 w-28 md:h-32 md:w-32 object-contain filter brightness-125 hover:brightness-150 transition-all duration-300 drop-shadow-2xl" 
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => window.open('https://www.nadt.gov.in/', '_blank')}
                             />
                             <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-display font-bold bg-gradient-to-r 
                                 from-white via-white to-gray-300 bg-clip-text text-transparent">
@@ -313,9 +314,9 @@ systems.
                             <h3 onClick={() => window.open('https://drive.google.com/file/d/1s60yqbCf24YZiVA26BnEQbkGW6HKdMLJ/preview', '_blank')} className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
                                 NADT Platform
                             </h3>
-                            <p className="text-sm cursor-default">
+                            <a href="https://www.nadt.gov.in/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline cursor-pointer text-sm">
                                 Advanced training platform for tax professionals with integrated management systems.
-                            </p>
+                            </a>
                         </div>
                         <div>
                             <h3 onClick={() => navigate('/features')} className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
@@ -323,22 +324,22 @@ systems.
                             </h3>
                             <ul className="space-y-2 text-sm">
                                 <li>
-                                    <a href="https://razorpay.com/docs/api/payments/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://razorpay.com/docs/api/payments/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Payment Processing
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://pptr.dev/api" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://pptr.dev/api" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Certificate Management
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.mongodb.com/docs/manual/core/document/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://www.mongodb.com/docs/manual/core/document/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Participant Tracking
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://recharts.org/en-US" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://recharts.org/en-US" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Analytics Dashboard
                                     </a>
                                 </li>
@@ -350,22 +351,22 @@ systems.
                             </h3>
                             <ul className="space-y-2 text-sm">
                                 <li>
-                                    <a href="https://www.nadt.gov.in/Privacy.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://www.nadt.gov.in/Privacy.aspx" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Documentation
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.nadt.gov.in/Hyperlinking.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://www.nadt.gov.in/Hyperlinking.aspx" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Help Center (Hyperlinking Policy Mandate)
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://incometaxindia.gov.in/Pages/default.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://incometaxindia.gov.in/Pages/default.aspx" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Contact Support (Forwarded to Official Income tax Website Government of INDIA)
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.nadt.gov.in/ViewContent.aspx?442" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://www.nadt.gov.in/ViewContent.aspx?442" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Training Resources
                                     </a>
                                 </li>
@@ -377,22 +378,22 @@ systems.
                             </h3>
                             <ul className="space-y-2 text-sm">
                                 <li>
-                                    <a href="https://www.nadt.gov.in/Privacy.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://www.nadt.gov.in/Privacy.aspx" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Privacy Policy
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://nadt.gov.in/writereaddata/MenuContentImages/Joining%20Guidelines%20final638245976831969251.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://nadt.gov.in/writereaddata/MenuContentImages/Joining%20Guidelines%20final638245976831969251.pdf" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         NADT Terms of Service
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://nadtlms.codetrade.in/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://nadtlms.codetrade.in/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Compliances Policy
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="https://www.myadt.com/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                    <a href="https://www.myadt.com/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gov-primary-400 transition-colors underline">
                                         Security
                                     </a>
                                 </li>
