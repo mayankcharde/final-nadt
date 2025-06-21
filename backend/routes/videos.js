@@ -151,8 +151,15 @@ router.get('/signed-url/:courseName/:videoId', verifyCourseAccess, (req, res) =>
             process.env.JWT_SECRET
         );
 
-        // Ensure BASE_URL is properly formatted
-        const baseUrl = process.env.VITE_BACKEND_HOST_URL || 'http://localhost:4000';
+        // Ensure BASE_URL is properly formatted and uses HTTPS in production
+        let baseUrl = process.env.VITE_BACKEND_HOST_URL || 'http://localhost:4000';
+        
+        // Check if we're in production (Render deployment)
+        if (process.env.NODE_ENV === 'production') {
+            // Ensure we're using HTTPS for production URLs
+            baseUrl = 'https://final-nadt.onrender.com';
+        }
+        
         const signedUrl = `${baseUrl}/api/videos/stream/${courseName}/${videoId}?token=${videoToken}`;
         
         // Return a more detailed response
