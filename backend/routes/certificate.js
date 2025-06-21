@@ -131,12 +131,12 @@ router.post('/generate', async (req, res) => {
             templatePath: backgroundDataUrl
         });
 
-        // Use chrome-aws-lambda's puppeteer and executablePath for maximum compatibility
-        const chromium = require('chrome-aws-lambda');
-        browser = await chromium.puppeteer.launch({
-            args: [...chromium.args, '--no-sandbox'],
-            executablePath: await chromium.executablePath,
-            headless: true,
+        // Use system Chromium for Render.com and similar environments
+        const puppeteer = require('puppeteer-core');
+        browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            executablePath: '/usr/bin/chromium-browser',
+            headless: 'new',
             defaultViewport: { width: 1120, height: 792 },
             timeout: timeoutMs
         });
