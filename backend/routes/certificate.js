@@ -35,20 +35,39 @@ async function ensureCertDir() {
 
 
 // ...existing code...
-router.get('/download/:id', async (req, res) => {
-    const certNumber = req.params.id;
-    let pdfPath = path.join(__dirname, '..', 'generated-certificates', `${certNumber}.pdf`);
-    // On Render, use /tmp directory if that's where you save PDFs
-    if (process.env.RENDER === 'true') {
-        pdfPath = `/tmp/${certNumber}.pdf`;
-    }
+router.get('/download/:certNumber', async (req, res) => {
     try {
+        const certificate = await Certificate.findOne({ certificateNumber: req.params.certNumber });
+        if (!certificate) {
+            return res.status(404).json({
+                success: false,
+                error: 'Certificate not found'
+            });
+        }
+
+        // For Render deployment, certificates are stored in /tmp
+        const pdfPath = isRender ? `/tmp/${certificate.certificateNumber}.pdf` : certificate.pdfPath;
+
+        try {
+            await fs.access(pdfPath);
+        } catch (error) {
+            return res.status(404).json({
+                success: false,
+                error: 'Certificate file not found'
+            });
+        }
+
         const fileBuffer = await fs.readFile(pdfPath);
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=${certNumber}.pdf`);
+        res.setHeader('Content-Disposition', `attachment; filename=${certificate.certificateNumber}.pdf`);
         res.send(fileBuffer);
-    } catch (err) {
-        res.status(404).json({ success: false, error: 'Certificate not found' });
+    } catch (error) {
+        console.error('Error downloading certificate:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to download certificate',
+            details: error.message
+        });
     }
 });
 // ...existing code...
@@ -226,6 +245,43 @@ router.get('/user/:userId', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Failed to fetch certificates',
+            details: error.message
+        });
+    }
+});
+
+// Download certificate by certificate number
+router.get('/download/:certNumber', async (req, res) => {
+    try {
+        const certificate = await Certificate.findOne({ certificateNumber: req.params.certNumber });
+        if (!certificate) {
+            return res.status(404).json({
+                success: false,
+                error: 'Certificate not found'
+            });
+        }
+
+        // For Render deployment, certificates are stored in /tmp
+        const pdfPath = isRender ? `/tmp/${certificate.certificateNumber}.pdf` : certificate.pdfPath;
+
+        try {
+            await fs.access(pdfPath);
+        } catch (error) {
+            return res.status(404).json({
+                success: false,
+                error: 'Certificate file not found'
+            });
+        }
+
+        const fileBuffer = await fs.readFile(pdfPath);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=${certificate.certificateNumber}.pdf`);
+        res.send(fileBuffer);
+    } catch (error) {
+        console.error('Error downloading certificate:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to download certificate',
             details: error.message
         });
     }
