@@ -5,6 +5,7 @@ const payment = require('./routes/payment');
 const auth = require('./routes/auth');
 const videos = require('./routes/videos');
 const path = require('path'); // Import path module
+const certificateRoutes = require('./routes/certificate');
 
 
 connectToMongo();
@@ -31,6 +32,7 @@ app.use('/videos', express.static(path.join(__dirname, 'videos'), {
     }
 }));
 // Serve static files
+app.use('/api/certificate', certificateRoutes);
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/certificates', express.static(path.join(__dirname, 'generated-certificates')));
 

@@ -33,6 +33,26 @@ async function ensureCertDir() {
     }
 }
 
+
+// ...existing code...
+router.get('/download/:id', async (req, res) => {
+    const certNumber = req.params.id;
+    let pdfPath = path.join(__dirname, '..', 'generated-certificates', `${certNumber}.pdf`);
+    // On Render, use /tmp directory if that's where you save PDFs
+    if (process.env.RENDER === 'true') {
+        pdfPath = `/tmp/${certNumber}.pdf`;
+    }
+    try {
+        const fileBuffer = await fs.readFile(pdfPath);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=${certNumber}.pdf`);
+        res.send(fileBuffer);
+    } catch (err) {
+        res.status(404).json({ success: false, error: 'Certificate not found' });
+    }
+});
+// ...existing code...
+
 // Certificate generation endpoint
 router.post('/generate', async (req, res) => {
     let browser = null;
