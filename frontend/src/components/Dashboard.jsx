@@ -868,3 +868,20 @@ export default function Dashboard() {
         </div>
     );
 }
+
+function DashboardCard({ title, value, icon, trend }) {
+    return (
+        <div className="glass-card p-6 hover-lift border border-gov-primary-500/10 
+            hover:border-gov-primary-500/20 transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+                <span className="text-2xl">{icon}</span>
+                <span className="text-sm text-gov-primary-400 bg-gov-primary-500/10 
+                    px-2 py-1 rounded-full border border-gov-primary-500/20">
+                    {trend}
+                </span>
+            </div>
+            <h3 className="text-white/70 text-sm font-medium">{title}</h3>
+            <p className="text-3xl font-semibold text-white mt-2">{value}</p>
+        </div>
+    );
+}
