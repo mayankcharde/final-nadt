@@ -141,7 +141,7 @@ export default function LandingPage() {
                         } overflow-hidden`}
                     >
                         <div className="px-2 pt-2 pb-3 space-y-1 bg-black/95 backdrop-blur-lg rounded-lg mt-2 shadow-lg border border-gray-800">
-                            <MobileNavLink href="#features">Features</MobileNavLink>
+                            <MobileNavLink href="#features"></MobileNavLink>
                             <button
                                 onClick={handleCoursesClick}
                                 className="w-full text-left px-4 py-2 text-white hover:text-gov-primary-400 
