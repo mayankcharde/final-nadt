@@ -85,7 +85,7 @@ export default function LandingPage() {
                         
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-8">
-                            <NavLink href="#features" className="text-gov-primary-600">Features</NavLink>
+                            <NavLink href="#features" className="text-gov-primary-600"></NavLink>
                             <button 
                                 onClick={handleCoursesClick}
                                 className="text-gov-primary-600 hover:text-gov-accent-400 font-medium transition-colors duration-200"
@@ -358,7 +358,7 @@ export default function LandingPage() {
                     <div className="mt-12 pt-8">
                         <div className="text-center space-y-8">
                             <div className="text-sm text-gov-surface-300 mb-6">
-                                © 2025 National Academy of Direct Taxes. All rights reserved.
+                                © 2025 National Academy of Direct Taxes. All rights reserved.Nagpur
                             </div>
                             
                             {/* Developers Section */}
@@ -379,7 +379,7 @@ export default function LandingPage() {
                                                 Mayank Shirish Charde
                                             </div>
                                             <div className="space-y-3">
-                                                <a href="mailto:mayankcharde215@gmail.com" 
+                                                <a href="mailto:mayankcharde2@gmail.com" 
                                                    className="flex items-center gap-3 text-gov-surface-200 hover:text-gov-primary-400 
                                                    transition-all duration-300 group">
                                                     <svg className="w-5 h-5 text-gov-primary-500 group-hover:scale-110 transition-transform" 
@@ -389,7 +389,7 @@ export default function LandingPage() {
                                                     </svg>
                                                     mayankcharde2@gmail.com
                                                 </a>
-                                                <a href="tel:+917558685721" 
+                                                <a href="tel:+919699561658" 
                                                    className="flex items-center gap-3 text-gov-surface-200 hover:text-gov-primary-400 
                                                    transition-all duration-300 group">
                                                     <svg className="w-5 h-5 text-gov-primary-500 group-hover:scale-110 transition-transform" 
@@ -408,7 +408,7 @@ export default function LandingPage() {
                                                 Yash Rajesh Garad
                                             </div>
                                             <div className="space-y-3">
-                                                <a href="mailto:yashgarad@gmail.com" 
+                                                <a href="mailto: yash.garad27@gmail.com" 
                                                    className="flex items-center gap-3 text-gov-surface-200 hover:text-gov-primary-400 
                                                    transition-all duration-300 group">
                                                     <svg className="w-5 h-5 text-gov-primary-500 group-hover:scale-110 transition-transform" 
@@ -418,7 +418,7 @@ export default function LandingPage() {
                                                     </svg>
                                                     yash.garad27@gmail.com
                                                 </a>
-                                                <a href="tel:+919604513192" 
+                                                <a href="tel:+919370471759" 
                                                    className="flex items-center gap-3 text-gov-surface-200 hover:text-gov-primary-400 
                                                    transition-all duration-300 group">
                                                     <svg className="w-5 h-5 text-gov-primary-500 group-hover:scale-110 transition-transform" 
