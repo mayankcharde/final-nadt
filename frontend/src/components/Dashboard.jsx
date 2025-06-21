@@ -75,13 +75,13 @@ export default function Dashboard() {
         completionChange: 0
     });
     const [certificates, setCertificates] = useState([]);
-    const [users] = useState([]); // Remove setUsers
-    const [userStatsLoading] = useState(false); // Remove setUserStatsLoading
-    const [userStats] = useState({
+    const [users, setUsers] = useState([]);
+    const [userStatsLoading, setUserStatsLoading] = useState(false);
+    const [userStats, setUserStats] = useState({
         total: 0,
         activeToday: 0,
         newThisWeek: 0
-    }); // Remove setUserStats
+    });
     const [coursePopularity, setCoursePopularity] = useState([]);
     const [purchasedCourses, setPurchasedCourses] = useState([]);
     const { shouldRefresh } = useDashboard();
