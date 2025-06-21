@@ -47,11 +47,13 @@ export default function LandingPage() {
 
     const handleLearnMore = () => {
         window.open('https://www.nadt.gov.in/BannerPage.aspx', '_blank');
-    };
-
-    const handleAccessPlatform = () => {
+    };    const handleAccessPlatform = () => {
         window.open('https://www.nadt.gov.in/BannerPage.aspx', '_blank');
     };
+
+
+
+
 
     const handleCoursesClick = () => {
         const token = localStorage.getItem('token');
@@ -170,8 +172,8 @@ export default function LandingPage() {
                             National Academy of Direct Taxes
                         </h1>
                         <p className="text-xl md:text-2xl text-gov-surface-200 max-w-3xl mx-auto leading-relaxed">
-                            Advanced training platform for tax professionals with integrated 
-                            payment processing, certificate management, and compliance tracking.
+                            Advanced training platform for tax professionals with integrated management 
+systems. 
                         </p>
                         <div className="flex flex-col sm:flex-row gap-6 justify-center">
                             <button
@@ -306,50 +308,94 @@ export default function LandingPage() {
 
             {/* Footer */}
             <footer className="bg-black text-gov-surface-200 py-12 border-t border-gov-border/20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div>
-                            <h3 className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
+                            <h3 onClick={() => window.open('https://drive.google.com/file/d/1s60yqbCf24YZiVA26BnEQbkGW6HKdMLJ/preview', '_blank')} className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
                                 NADT Platform
                             </h3>
-                            <p className="text-sm cursor-pointer hover:text-gov-primary-400 transition-colors">
+                            <p className="text-sm cursor-default">
                                 Advanced training platform for tax professionals with integrated management systems.
                             </p>
                         </div>
                         <div>
-                            <h3 className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
+                            <h3 onClick={() => navigate('/features')} className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
                                 Features
                             </h3>
                             <ul className="space-y-2 text-sm">
-                                {["Payment Processing", "Certificate Management", "Participant Tracking", "Analytics Dashboard"].map((item) => (
-                                    <li key={item} className="cursor-pointer hover:text-gov-primary-400 transition-colors">
-                                        {item}
-                                    </li>
-                                ))}
+                                <li>
+                                    <a href="https://razorpay.com/docs/api/payments/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Payment Processing
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://pptr.dev/api" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Certificate Management
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.mongodb.com/docs/manual/core/document/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Participant Tracking
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://recharts.org/en-US" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Analytics Dashboard
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
+                            <h3 onClick={() => navigate('/support')} className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
                                 Support
                             </h3>
                             <ul className="space-y-2 text-sm">
-                                {["Documentation", "Help Center", "Contact Support", "Training Resources"].map((item) => (
-                                    <li key={item} className="cursor-pointer hover:text-gov-primary-400 transition-colors">
-                                        {item}
-                                    </li>
-                                ))}
+                                <li>
+                                    <a href="https://www.nadt.gov.in/Privacy.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Documentation
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.nadt.gov.in/Hyperlinking.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Help Center (Hyperlinking Policy Mandate)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://incometaxindia.gov.in/Pages/default.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Contact Support (Forwarded to Official Income tax Website Government of INDIA)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.nadt.gov.in/ViewContent.aspx?442" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Training Resources
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
+                            <h3 onClick={() => navigate('/legal')} className="text-white font-semibold mb-4 cursor-pointer hover:text-gov-primary-400 transition-colors">
                                 Legal
                             </h3>
                             <ul className="space-y-2 text-sm">
-                                {["Privacy Policy", "Terms of Service", "Compliance", "Security"].map((item) => (
-                                    <li key={item} className="cursor-pointer hover:text-gov-primary-400 transition-colors">
-                                        {item}
-                                    </li>
-                                ))}
+                                <li>
+                                    <a href="https://www.nadt.gov.in/Privacy.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Privacy Policy
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://nadt.gov.in/writereaddata/MenuContentImages/Joining%20Guidelines%20final638245976831969251.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        NADT Terms of Service
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://nadtlms.codetrade.in/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Compliances Policy
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.myadt.com/" target="_blank" rel="noopener noreferrer" className="hover:text-gov-primary-400 transition-colors underline">
+                                        Security
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
