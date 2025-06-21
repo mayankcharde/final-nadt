@@ -184,15 +184,19 @@ router.post('/generate', async (req, res) => {
         await page.setContent(html, { waitUntil: ['domcontentloaded', 'networkidle0'] });
 
         // Always use /tmp for ephemeral storage on Render
-        pdfPath = `/tmp/${certNumber}.pdf`;
+        const renderPath = `/tmp/${certNumber}.pdf`;
         await page.pdf({
-            path: pdfPath,
+            path: renderPath,
             width: '1120px',
             height: '792px',
             printBackground: true,
             preferCSSPageSize: true,
             timeout: timeoutMs
         });
+
+        // Update certificate record with the correct path for the deployment environment
+        certificate.pdfPath = isRender ? renderPath : pdfPath;
+        await certificate.save();
 
         // Clean up browser
         await browser.close();
